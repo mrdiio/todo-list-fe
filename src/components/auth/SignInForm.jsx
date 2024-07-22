@@ -38,7 +38,7 @@ export default function SignInForm() {
       username: form.getValues('username'),
       password: form.getValues('password'),
       redirect: false,
-      // callbackUrl: searchParams.get('callbackUrl') || '/dashboard',
+      callbackUrl: searchParams.get('callbackUrl') || '/dashboard',
     })
     if (login?.error) {
       form.setError('username', {

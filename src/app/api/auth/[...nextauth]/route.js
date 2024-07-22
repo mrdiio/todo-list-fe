@@ -1,10 +1,28 @@
+import apiClient from '@/lib/apiClient'
 import { loginService } from '@/services/auth/auth.service'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+async function refreshAccessToken(token) {
+  const res = await apiClient.post('/auth/refresh-token', {
+    headers: {
+      Authorization: `Bearer ${token.refreshToken}`,
+    },
+  })
+
+  console.log('refreshed')
+
+  console.log('res', res)
+
+  return {
+    ...token,
+  }
+}
+
 export const authOptions = {
   session: {
     strategy: 'jwt',
+    maxAge: 60 * 60 * 24,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -42,19 +60,20 @@ export const authOptions = {
         const payload = {
           sub: user.sub,
           username: user.username,
-          name: user.name,
         }
         token.user = payload
+        token.expiresIn = user.expiresIn
 
         token.accessToken = user.accessToken
         token.refreshToken = user.refreshToken
       }
 
+      // if (new Date().getTime() < token.expiresIn) return token
+
       return token
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken
-      session.refreshToken = token.refreshToken
       session.user = token.user
 
       return session

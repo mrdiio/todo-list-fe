@@ -1,4 +1,4 @@
-export default function AuthLayout({ children }) {
+export default async function AuthLayout({ children }) {
   return (
     <div className="grid flex-grow w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="flex flex-col">
