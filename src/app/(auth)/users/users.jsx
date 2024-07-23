@@ -1,5 +1,4 @@
 'use client'
-
 import { getUsersService } from '@/services/user.service'
 import { useQuery } from '@tanstack/react-query'
 

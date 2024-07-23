@@ -1,21 +1,33 @@
-import apiClient from '@/lib/apiClient'
-import { loginService } from '@/services/auth/auth.service'
+import { loginService, refreshTokenService } from '@/services/auth/auth.service'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-async function refreshAccessToken(token) {
-  const res = await apiClient.post('/auth/refresh-token', {
-    headers: {
-      Authorization: `Bearer ${token.refreshToken}`,
-    },
-  })
+async function refreshAccessToken(oldRefreshToken) {
+  try {
+    const res = await refreshTokenService(oldRefreshToken)
 
-  console.log('refreshed')
+    const payload = {
+      sub: res.data.data.sub,
+      username: res.data.data.username,
+      expiresIn: res.data.data.expiresIn,
+    }
 
-  console.log('res', res)
+    const accessToken = res.headers['set-cookie'][0].split(';')[0].split('=')[1]
 
-  return {
-    ...token,
+    const refreshToken = res.headers['set-cookie'][1]
+      .split(';')[0]
+      .split('=')[1]
+
+    console.log('refreshed')
+
+    return { user: payload, accessToken, refreshToken }
+  } catch (error) {
+    console.log('error')
+
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    }
   }
 }
 
@@ -60,21 +72,25 @@ export const authOptions = {
         const payload = {
           sub: user.sub,
           username: user.username,
+          expiresIn: user.expiresIn,
         }
         token.user = payload
-        token.expiresIn = user.expiresIn
 
         token.accessToken = user.accessToken
         token.refreshToken = user.refreshToken
       }
 
-      // if (new Date().getTime() < token.expiresIn) return token
+      if (new Date().getTime() >= token.user.expiresIn) {
+        return await refreshAccessToken(token.refreshToken)
+      }
 
       return token
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken
       session.user = token.user
+      session.expiresIn = token.expiresIn
+      session.error = token.error
 
       return session
     },

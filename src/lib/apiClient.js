@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getSession } from 'next-auth/react'
+import { getSession, signOut } from 'next-auth/react'
 
 const apiClient = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
@@ -21,5 +21,25 @@ apiClient.interceptors.request.use(async (config) => {
 
   return config
 })
+
+// redirect to login page if unauthorized
+apiClient.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  async (error) => {
+    if (error.response.status === 401) {
+      const session = await getSession()
+      if (session) {
+        if (session.error === 'RefreshAccessTokenError') {
+          signOut()
+        }
+      }
+      // signOut()
+    }
+
+    return Promise.reject(error)
+  }
+)
 
 export default apiClient
