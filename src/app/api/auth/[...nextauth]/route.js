@@ -1,10 +1,11 @@
 import { loginService, refreshTokenService } from '@/services/auth/auth.service'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { redirect } from 'next/navigation'
 
-async function refreshAccessToken(oldRefreshToken) {
+async function refreshAccessToken(token) {
   try {
-    const res = await refreshTokenService(oldRefreshToken)
+    const res = await refreshTokenService(token.refreshToken)
 
     const payload = {
       sub: res.data.data.sub,
@@ -22,7 +23,7 @@ async function refreshAccessToken(oldRefreshToken) {
 
     return { user: payload, accessToken, refreshToken }
   } catch (error) {
-    console.log('error')
+    console.log('error refresh', error.response.data)
 
     return {
       ...token,
@@ -77,20 +78,19 @@ export const authOptions = {
         token.user = payload
 
         token.accessToken = user.accessToken
-        token.refreshToken = user.refreshToken
+        // token.refreshToken = user.refreshToken
       }
 
-      if (new Date().getTime() >= token.user.expiresIn) {
-        return await refreshAccessToken(token.refreshToken)
+      if (new Date().getTime() < token.user.expiresIn) {
+        return token
       }
 
-      return token
+      return await refreshAccessToken(token)
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken
       session.user = token.user
-      session.expiresIn = token.expiresIn
-      session.error = token.error
+      session.error = token.error || null
 
       return session
     },

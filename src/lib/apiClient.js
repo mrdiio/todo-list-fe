@@ -32,9 +32,12 @@ apiClient.interceptors.response.use(
       const session = await getSession()
       if (session) {
         if (session.error === 'RefreshAccessTokenError') {
+          console.log('logged out')
           signOut()
         }
       }
+
+      console.log('error 401')
       // signOut()
     }
 
