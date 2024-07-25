@@ -46,8 +46,8 @@ export default function SignInForm() {
         message: login.error,
       })
     } else {
-      router.push(login.url)
       router.refresh()
+      router.push(login.url)
     }
   }
 

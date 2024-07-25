@@ -1,7 +1,6 @@
 import { loginService, refreshTokenService } from '@/services/auth/auth.service'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { redirect } from 'next/navigation'
 
 async function refreshAccessToken(token) {
   try {
@@ -78,7 +77,7 @@ export const authOptions = {
         token.user = payload
 
         token.accessToken = user.accessToken
-        // token.refreshToken = user.refreshToken
+        token.refreshToken = user.refreshToken
       }
 
       if (new Date().getTime() < token.user.expiresIn) {
