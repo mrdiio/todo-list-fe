@@ -5,7 +5,11 @@ export const generateCsp = () => {
           script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
     process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''
   };
-          style-src 'self' 'nonce-${nonce}';
+          style-src 'self' ${
+            process.env.NODE_ENV === 'development'
+              ? "'unsafe-inline'"
+              : `'nonce-${nonce}'`
+          };
           img-src 'self' blob: data:;
           font-src 'self';
           object-src 'none';

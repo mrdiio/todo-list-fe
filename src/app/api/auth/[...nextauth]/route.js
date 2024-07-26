@@ -9,6 +9,7 @@ async function refreshAccessToken(token) {
     const payload = {
       sub: res.data.data.sub,
       username: res.data.data.username,
+      name: res.data.data.name,
       expiresIn: res.data.data.expiresIn,
     }
 
@@ -43,10 +44,6 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
-      credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
       async authorize(credentials) {
         const { username, password } = credentials
         const res = await loginService(username, password)
@@ -72,6 +69,7 @@ export const authOptions = {
         const payload = {
           sub: user.sub,
           username: user.username,
+          name: user.name,
           expiresIn: user.expiresIn,
         }
         token.user = payload
