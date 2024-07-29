@@ -5,6 +5,11 @@ export const generateCsp = () => {
           script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
     process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''
   };
+          script-src-elem 'self' ${
+            process.env.NODE_ENV === 'development'
+              ? "'unsafe-inline'"
+              : `'nonce-${nonce}'`
+          };
           style-src 'self' ${
             process.env.NODE_ENV === 'development'
               ? "'unsafe-inline'"
