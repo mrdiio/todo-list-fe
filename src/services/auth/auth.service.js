@@ -1,8 +1,12 @@
 import axios from 'axios'
 
+const authApi = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/auth`,
+})
+
 export const loginService = async (username, password) => {
   try {
-    const res = await axios.post('http://localhost:3000/api/auth/local/login', {
+    const res = await authApi.post('/local/login', {
       username,
       password,
     })
@@ -14,8 +18,8 @@ export const loginService = async (username, password) => {
 }
 
 export const refreshTokenService = async (refreshToken) => {
-  const res = await axios.post(
-    'http://localhost:3000/api/auth/refresh',
+  const res = await authApi.post(
+    '/refresh',
     {},
     {
       headers: {
