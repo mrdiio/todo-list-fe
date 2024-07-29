@@ -1,12 +1,16 @@
 import axios from 'axios'
 
 export const loginService = async (username, password) => {
-  const res = await axios.post('http://localhost:3000/api/auth/local/login', {
-    username,
-    password,
-  })
+  try {
+    const res = await axios.post('http://localhost:3000/api/auth/local/login', {
+      username,
+      password,
+    })
 
-  return res
+    return res
+  } catch (error) {
+    throw new Error(error.response.data?.message)
+  }
 }
 
 export const refreshTokenService = async (refreshToken) => {
