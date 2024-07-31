@@ -9,7 +9,7 @@ export default async function Home() {
   if (session) redirect('/dashboard')
 
   return (
-    <main className="flex-grow flex flex-col justify-center px-5 bg-login">
+    <main className="flex-grow flex flex-col justify-center px-5">
       <div className="container max-w-lg sm:py-10 p-6 border-none rounded-md bg-white shadow-md">
         <div className="pb-4">
           <span className="text-slate-400">Welcome</span>

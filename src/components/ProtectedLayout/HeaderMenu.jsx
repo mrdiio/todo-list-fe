@@ -26,7 +26,7 @@ export default function HeaderMenu({ display }) {
             <Link
               key={index}
               href={item.href}
-              className={`text-muted-foreground transition-colors hover:text-foreground ${
+              className={`transition-colors hover:text-foreground ${
                 pathname.split('/')[1] === item.href.split('/')[1]
                   ? 'text-foreground'
                   : 'text-muted-foreground'

@@ -1,5 +1,5 @@
 'use client'
-import { Menu, Package2, Search } from 'lucide-react'
+import { CircleUser, Menu, Package2, Search } from 'lucide-react'
 import Link from 'next/link'
 import {
   Sheet,
@@ -90,20 +90,22 @@ export default function Header({ auth }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Hi, {auth.name.split(' ')[0]}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
+            <Button
+              variant="destructive"
+              className="w-full"
               onClick={() => {
                 signOut({
                   callbackUrl: '/',
                 })
               }}
             >
-              Logout
-            </DropdownMenuItem>
+              Sign Out
+            </Button>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
