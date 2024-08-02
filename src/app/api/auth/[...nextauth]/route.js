@@ -1,6 +1,7 @@
 import { loginService, refreshTokenService } from '@/services/auth/auth.service'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 
 async function refreshAccessToken(token) {
   try {
@@ -62,9 +63,26 @@ export const authOptions = {
         return null
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      if (account.provider === 'google') {
+        console.log('google', account)
+        user.name = 'dioooooooooo'
+        return profile.email_verified
+      }
+
+      return true
+    },
+    async jwt({ token, user, account }) {
+      console.log('user', user)
+      // console.log('account', account)
+      // console.log('token', token)
+
       if (user) {
         const payload = {
           sub: user.sub,
@@ -77,6 +95,23 @@ export const authOptions = {
         token.accessToken = user.accessToken
         token.refreshToken = user.refreshToken
       }
+
+      // if (account.provider === 'google') {
+      //   if (user) {
+      //     const payload = {
+      //       sub: user.id,
+      //       name: user.name,
+      //       email: user.email,
+      //       expiresIn: account.expires_at,
+      //     }
+
+      //     token.user = payload
+      //   }
+
+      //   token.accessToken = account.access_token
+      // }
+
+      return token
 
       if (new Date().getTime() < token.user.expiresIn) {
         return token
