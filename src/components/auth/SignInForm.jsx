@@ -114,7 +114,6 @@ export default function SignInForm() {
 
       <Separator className="my-6" />
 
-      <h1>Sign In with:</h1>
       <div className="flex flex-col">
         <Button onClick={() => signIn('google')}>Google</Button>
       </div>
