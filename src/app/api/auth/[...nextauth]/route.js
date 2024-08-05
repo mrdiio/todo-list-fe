@@ -12,6 +12,7 @@ async function refreshAccessToken(token) {
       sub: res.data.data.sub,
       username: res.data.data.username,
       name: res.data.data.name,
+      provider: token.user.provider,
       expiresIn: res.data.data.expiresIn,
     }
 
@@ -72,16 +73,6 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account.provider === 'google') {
-        // const dbUser = await fetch(
-        //   `http://localhost:3000/api/auth/google/verify?token=${account.id_token}`,
-        //   {
-        //     method: 'GET',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //     },
-        //   }
-        // ).then((res) => res.json())
-
         try {
           const res = await axios.get(
             `http://localhost:3000/api/auth/google/verify?token=${account.id_token}`,
@@ -108,7 +99,8 @@ export const authOptions = {
           user.accessToken = accessToken
           user.refreshToken = refreshToken
         } catch (error) {
-          return false
+          console.log('error', error.response.data.message)
+          return `/error/unauthorized?message=${error.response?.data?.message}`
         }
 
         return profile.email_verified
@@ -130,8 +122,6 @@ export const authOptions = {
         token.accessToken = user.accessToken
         token.refreshToken = user.refreshToken
       }
-
-      return token
 
       if (new Date().getTime() < token.user.expiresIn) {
         return token
